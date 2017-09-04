@@ -1,6 +1,5 @@
 ---
 roles:
-
   base:
 #    synced_folders:
 #      - host_path: '~/vagrant/common'
@@ -13,16 +12,16 @@ roles:
 #        inline: '/opt/vagrant-common/scripts/base.sh'
 
   base_2048mb_ram:
-    provider:
-      type: virtualbox
-      customize:
-        - [modifyvm, !ruby/sym id, '--memory', 2048]
+    providers:
+      - type: virtualbox
+        customize:
+          - [modifyvm, !ruby/sym id, '--memory', 2048]
 
   base_1024mb_ram:
-    provider:
-      type: virtualbox
-      customize:
-        - [modifyvm, !ruby/sym id, '--memory', 1024]
+    providers:
+      - type: virtualbox
+        customize:
+          - [modifyvm, !ruby/sym id, '--memory', 1024]
 
   master_base:
     synced_folders:
