@@ -31,27 +31,19 @@ roles:
       - type: shell
         inline: "echo 'nameserver 8.8.8.8' > /etc/resolv.conf"
       - type: shell
-        inline: "x=`/opt/puppet/bin/puppet config print basemodulepath`;/opt/puppet/bin/puppet config set basemodulepath ${x}:/tmp/puppet/modules"
-      - type: shell
-        inline: '/opt/puppet/bin/puppet module install puppetlabs/stdlib --version 4.4.0'
-      - type: shell
-        inline: '/opt/puppet/bin/puppet module install puppetlabs/pe_gem --version 0.0.1'
-      - type: shell
-        inline: '/opt/puppet/bin/puppet module install puppetlabs/haproxy --version 1.2.0'
-      - type: shell
-        inline: '/opt/puppet/bin/puppet module install puppetlabs/apache --version 1.4.1'
-      - type: shell
-        inline: '/opt/puppet/bin/puppet module install puppetlabs/ntp --version 4.0.0'
-      - type: shell
-        inline: '/opt/puppet/bin/puppet module install puppetlabs/apache --version 1.4.1'
-      - type: shell
-        inline: '/opt/puppet/bin/puppet module install puppetlabs/mysql --version 3.4.0'
-      - type: shell
-        inline: '/opt/puppet/bin/puppet apply /tmp/puppet/misc/make_link_to_site_pp.pp'
-      #restart the master for 3.3 and below
-      - type: shell
-        inline: 'service pe-httpd restart'
-      #restart the master for 3.4 and above
+        inline: |
+          PATH="$PATH:/opt/puppetlabs/bin:/opt/puppetlabs/puppet/bin"
+          x=`puppet config print basemodulepath`
+          puppet config set basemodulepath ${x}:/tmp/puppet/modules
+          puppet module install puppetlabspuppetlabs/concat --version 2.2.1
+          puppet module install puppetlabs/stdlib --version 4.19.0
+          puppet module install puppet/staging --version 2.2.0
+          puppet module install puppetlabs/puppetserver_gem --version 1.0.0
+          puppet module install puppetlabs/haproxy --version 1.5.0
+          puppet module install puppetlabs/ntp --version 6.2.0
+          puppet module install puppetlabs/apache --version 2.0.0
+          puppet module install puppetlabs/mysql --version 3.11.0
+          puppet apply /tmp/puppet/misc/make_link_to_site_pp.pp
       - type: shell
         inline: 'service pe-puppetserver restart'
 
