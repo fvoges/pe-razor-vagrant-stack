@@ -1,19 +1,9 @@
 class pe_env {
-  $file = '/root/.bash_profile'
-
-  file { $file :
-    ensure => 'file',
-    owner  => '0',
-    group  => '0',
-    mode   => '0644',
+  file { '/etc/profile.d/pe.sh' :
+    ensure  => file,
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0644',
+    content => "PATH=/opt/puppetlabs/bin:/opt/puppetlabs/puppet/bin:\${PATH}\n",
   }
-
-  file_line { 'root_puppet_path':
-    ensure  => present,
-    line    => 'PATH=/opt/puppet/bin:$PATH; export PATH',
-    path    => $file,
-    match   => '^PATH.*$',
-    require => File[$file],
-  }
-
 }
