@@ -51,7 +51,9 @@ roles:
     provisioners:
       - type: hosts
       - type: shell
-        inline: 'mkdir -p /var/lib/hiera; cp /vagrant/hierafiles/defaults.yaml /var/lib/hiera/defaults.yaml'
+        inline: |
+          mkdir -p /etc/puppetlabs/code/environments/production/hieradata
+          cp /vagrant/hierafiles/defaults.yaml /etc/puppetlabs/code/environments/production/hieradata/common.yaml
       - type: pe_bootstrap
         role: :master
 #        version: '3.2.0'
