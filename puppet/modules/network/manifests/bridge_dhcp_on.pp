@@ -4,23 +4,23 @@ class network::bridge_dhcp_on {
     path   => '/etc/sysconfig/network-scripts/ifcfg-eth1',
   }
   file_line { 'eth1 PEERDNS=no':
-    path  => '/etc/sysconfig/network-scripts/ifcfg-eth1',
-    line  => 'PEERDNS="no"',
-    match => 'PEERDNS',
+    path    => '/etc/sysconfig/network-scripts/ifcfg-eth1',
+    line    => 'PEERDNS="no"',
+    match   => 'PEERDNS',
     require => File['ifcfg-eth1'],
     notify  => Service['network'],
   }
   file_line { 'eth1 BOOTPROTO=dhcp':
-    path  => '/etc/sysconfig/network-scripts/ifcfg-eth1',
-    line  => 'BOOTPROTO="dhcp"',
-    match => 'BOOTPROTO',
+    path    => '/etc/sysconfig/network-scripts/ifcfg-eth1',
+    line    => 'BOOTPROTO="dhcp"',
+    match   => 'BOOTPROTO',
     require => File['ifcfg-eth1'],
     notify  => Service['network'],
   }
   file_line { 'eth1 ONBOOT=yes':
-    path  => '/etc/sysconfig/network-scripts/ifcfg-eth1',
-    line  => 'ONBOOT="yes"',
-    match => 'ONBOOT',
+    path    => '/etc/sysconfig/network-scripts/ifcfg-eth1',
+    line    => 'ONBOOT="yes"',
+    match   => 'ONBOOT',
     require => File['ifcfg-eth1'],
     notify  => Service['network'],
   }

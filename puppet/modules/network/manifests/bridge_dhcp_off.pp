@@ -11,16 +11,16 @@ class network::bridge_dhcp_off {
     notify  => Service['network'],
   }
   file_line { 'eth1 BOOTPROTO=none':
-    path  => '/etc/sysconfig/network-scripts/ifcfg-eth1',
-    line  => 'BOOTPROTO="no"',
-    match => 'BOOTPROTO',
+    path    => '/etc/sysconfig/network-scripts/ifcfg-eth1',
+    line    => 'BOOTPROTO="no"',
+    match   => 'BOOTPROTO',
     require => File['ifcfg-eth1'],
     notify  => Service['network'],
   }
   file_line { 'eth1 ONBOOT=no':
-    path  => '/etc/sysconfig/network-scripts/ifcfg-eth1',
-    line  => 'ONBOOT="no"',
-    match => 'ONBOOT',
+    path    => '/etc/sysconfig/network-scripts/ifcfg-eth1',
+    line    => 'ONBOOT="no"',
+    match   => 'ONBOOT',
     require => File['ifcfg-eth1'],
     notify  => Service['network'],
   }
