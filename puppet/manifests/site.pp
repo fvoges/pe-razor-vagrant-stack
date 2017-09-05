@@ -53,6 +53,7 @@ node 'dhcp-server' {
   }
   include 'razor_dnsmasq'
   include 'razor_ipv4_forward'
+  include 'pe_env'
 }
 
 node 'puppet-master' {
@@ -69,7 +70,7 @@ node 'razor-server' {
     servers => [ 'puppet-master iburst', ],
   }
   include 'pe_env'
-    class { 'pe_razor':
+  class { 'pe_razor':
 #    pe_tarball_base_url => 'file:///opt/vagrant-common/repos/pe-packages',
 #    microkernel_url     => "file:///opt/vagrant-common/repos/pe-packages/${::pe_version}/puppet-enterprise-razor-microkernel-${::pe_version}.tar",
   }
