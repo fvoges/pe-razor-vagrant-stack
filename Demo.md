@@ -74,6 +74,7 @@ VBoxManage modifyvm Razor-Small-2 --nic2 bridged --nictype2 82540EM --bridgeadap
 ```
 
 Change the number of CPUs to 2 on one of the `Razor-Template-Small` VMs.
+
 __Optional:__ Add a second network interface to that VM and set it to bridge mode. If using the bridge interface, uncomment the lines `include network::bridge_dhcp_off` and `include network::bridge_dhcp_on` in `site.pp`.
 
 ###  Start nodes
@@ -121,7 +122,11 @@ razor create-tag --name virtual --rule '["=",  ["fact", "is_virtual"], true]'
 
 ### Add a repo
 
-Create a OS repo to provision the servers:
+Create a OS repo to provision the servers. You can either use ISO or a URL.
+
+Using an ISO, it will download and extract the contents into a local repo. The URL will just download the necessary boot files to start the OS install and the packages will be downloaded from the remote repository.
+
+Using an ISO:
 
 ```shell
 razor create-repo --name=centos-6.6 --task centos/6 --iso-url http://mirror.centos.org/centos/6.6/isos/x86_64/CentOS-6.6-x86_64-minimal.iso
@@ -130,6 +135,12 @@ razor create-repo --name=centos-6.6 --task centos/6 --iso-url http://mirror.cent
 You can't donwload the OS ISO from [mirror.centos.org](mirror.centos.org). Open [http://mirror.centos.org/centos/6.6/isos/x86_64/CentOS-6.6-x86_64-minimal.iso](http://mirror.centos.org/centos/6.6/isos/x86_64/CentOS-6.6-x86_64-minimal.iso) in your browser, pick a mirror and replace the URL above with your selected mirror.
 
 The repo creation will take some time - it has to download the ISO and then extract the contents to the local disk. You can monitor the progress with the command `watch razor commands`. Once the command finished, you can move to the next step.
+
+Using a URL:
+
+```shell
+razor create-repo --name=centos-6 --task centos/6 --url http://mirror.centos.org/centos/6/os/x86_64/
+```
 
 ### Create policies
 
