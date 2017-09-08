@@ -38,7 +38,7 @@ curl -s -o /root/razor_postinstall.sh <%= file_url("post_install") %>
 
 <%= render_template("custom_facts") %>
 <%= render_template("disable_ipv6") %>
-<#%= render_template("custom_repos") %>
+<%#= render_template("custom_repos") %>
 
 # Run razor_postinstall.sh on next boot via rc.local
 if [ ! -f /etc/rc.d/rc.local ]; then
