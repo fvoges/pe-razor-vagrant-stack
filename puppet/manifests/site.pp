@@ -47,35 +47,35 @@ node default {
 }
 
 node 'dhcp-server' {
-  class { 'ntp':
-    tinker => true,
+  class { '::ntp':
+    tinker  => true,
     servers => [ 'puppet-master iburst', ],
   }
-  include 'razor_dnsmasq'
-  include 'razor_ipv4_forward'
-  include 'pe_env'
+  include ::razor_dnsmasq
+  include ::razor_ipv4_forward
+  include ::pe_env
 }
 
 node 'puppet-master' {
-  class { 'ntp':
-    tinker => true,
+  class { '::ntp':
+    tinker  => true,
     servers => [ 'pool.ntp.org iburst', ],
   }
-  include 'pe_env'
+  include ::pe_env
 }
 
 node 'razor-server' {
-  class { 'ntp':
-    tinker => true,
+  class { '::ntp':
+    tinker  => true,
     servers => [ 'puppet-master iburst', ],
   }
-  include 'pe_env'
-  class { 'pe_razor':
+  include ::pe_env
+  class { '::pe_razor':
 #    pe_tarball_base_url => 'file:///opt/vagrant-common/repos/pe-packages',
 #    microkernel_url     => "file:///opt/vagrant-common/repos/pe-packages/${::pe_version}/puppet-enterprise-razor-microkernel-${::pe_version}.tar",
   }
-  include 'razor_client'
-  class {'apache':
+  include ::razor_client
+  class { '::apache':
     default_vhost => false,
   }
   apache::vhost { $fqdn:
@@ -88,13 +88,13 @@ node 'razor-server' {
 }
 
 node /^awesomeweb\d+/ {
-  class { 'ntp':
-    tinker => true,
+  class { '::ntp':
+    tinker  => true,
     servers => [ 'puppet-master iburst', ],
   }
-  #include network::bridge_dhcp_off
+  #include ::network::bridge_dhcp_off
 
-  class {'apache':
+  class { '::apache':
     default_vhost => false,
   }
   apache::vhost { $fqdn:
@@ -103,11 +103,11 @@ node /^awesomeweb\d+/ {
     manage_docroot => true,
   }
   file { '/opt/www/index.html':
-    ensure => file,
+    ensure  => file,
     content => "<html>\n<head>\n<title>Awesome Web Site</title>\n</head>\n<body>\n<h1>This is ${::fqdn}</h1>\n</body>\n</html>\n",
   }
   file { '/opt/www/index.txt':
-    ensure => file,
+    ensure  => file,
     content => "This is ${::fqdn}\n",
   }
   @@haproxy::balancermember { $::fqdn:
@@ -120,13 +120,13 @@ node /^awesomeweb\d+/ {
 }
 
 node 'awesomesite' {
-  class { 'ntp':
-    tinker => true,
+  class { '::ntp':
+    tinker  => true,
     servers => [ 'puppet-master iburst', ],
   }
-  #include network::bridge_dhcp_on
+  #include ::network::bridge_dhcp_on
 
-  include haproxy
+  include ::haproxy
   haproxy::listen { 'awesomesite00':
     ipaddress => '0.0.0.0',
     ports     => '80',
@@ -136,7 +136,7 @@ node 'awesomesite' {
         'tcplog',
         #'ssl-hello-chk',
         ],
-        'balance' => 'roundrobin',
+      'balance' => 'roundrobin',
     },
   }
 
@@ -153,10 +153,10 @@ node 'awesomesite' {
 }
 
 node /^mysqldb\d+/ {
-  class { 'ntp':
-    tinker => true,
+  class { '::ntp':
+    tinker  => true,
     servers => [ 'puppet-master iburst', ],
   }
-  class { 'mysql::server':
+  class { '::mysql::server':
   }
 }
