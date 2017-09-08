@@ -71,6 +71,7 @@ node 'razor-server' {
   }
   include ::pe_env
   class { '::pe_razor':
+    protect_new_nodes => false,
 #    pe_tarball_base_url => 'file:///opt/vagrant-common/repos/pe-packages',
 #    microkernel_url     => "file:///opt/vagrant-common/repos/pe-packages/${::pe_version}/puppet-enterprise-razor-microkernel-${::pe_version}.tar",
   }
