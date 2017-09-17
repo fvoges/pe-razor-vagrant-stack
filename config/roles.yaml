@@ -92,3 +92,13 @@ roles:
         inline: 'service iptables save'
       - type: shell
         inline: 'service iptables restart'
+
+  razor-server:
+    provisioners:
+      - type: shell
+        inline: |
+          for d in hooks tasks;
+          do
+            test -d /etc/puppetlabs/razor-server/${d} && rm -rf /etc/puppetlabs/razor-server/${d}
+            ln -sfn /vagrant/razor-${d} /etc/puppetlabs/razor-server/${d}
+          done
