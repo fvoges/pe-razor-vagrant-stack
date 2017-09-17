@@ -134,7 +134,7 @@ Using an ISO, it will download and extract the contents into a local repo. The U
 Using an ISO:
 
 ```shell
-razor create-repo --name=centos-6.6 --task centos/6 --iso-url http://mirror.centos.org/centos/6.6/isos/x86_64/CentOS-6.6-x86_64-minimal.iso
+razor create-repo --name=centos-6 --task centos/6 --iso-url http://mirror.centos.org/centos/6.6/isos/x86_64/CentOS-6.6-x86_64-minimal.iso
 ```
 
 You can't donwload the OS ISO from [mirror.centos.org](mirror.centos.org). Open [http://mirror.centos.org/centos/6.6/isos/x86_64/CentOS-6.6-x86_64-minimal.iso](http://mirror.centos.org/centos/6.6/isos/x86_64/CentOS-6.6-x86_64-minimal.iso) in your browser, pick a mirror and replace the URL above with your selected mirror.
@@ -156,7 +156,7 @@ Policies are the rules used by Razor to decide what to do with the available nod
 This rule will use upto 2 nodes tagged with the tags `small` and `1cpu`, provision with CentOS, name them `awesomeweb${id}` (e.g., `node17` would be named `awesomeweb17`).
 
 ```shell
-razor create-policy --name awesome-web --repo centos-6.6 --broker pe --tag '[ "small", "1cpu" ]' --enabled --hostname 'awesomeweb${id}' --root-password secret --max-count 2 --task centos/6/custom --node-metadata role=awesome-web --node-metadata group=awesomesite
+razor create-policy --name awesome-web --repo centos-6 --broker pe --tag '[ "small", "1cpu" ]' --enabled --hostname 'awesomeweb${id}.vm' --root-password secret --max-count 2 --task centos/6/custom --node-metadata role=awesome-web --node-metadata group=awesomesite
 ```
 
 #### Load balancer
@@ -164,7 +164,7 @@ razor create-policy --name awesome-web --repo centos-6.6 --broker pe --tag '[ "s
 This rule will use 1 node tagged with the tags `small` and `2cpu`, provision with CentOS, name it `awesomesite` (e.g., `node17` would be named `awesomesite`).
 
 ```shell
-razor create-policy --name awesome-lb --repo centos-6.6 --broker pe --tag '[ "small", "2cpu" ]' --enabled --hostname 'awesomesite' --root-password secret --max-count 1 --task centos/6/custom --node-metadata role=awesome-lb --node-metadata group=awesomesite
+razor create-policy --name awesome-lb --repo centos-6 --broker pe --tag '[ "small", "2cpu" ]' --enabled --hostname 'awesomesite.vm' --root-password secret --max-count 1 --task centos/6/custom --node-metadata role=awesome-lb --node-metadata group=awesomesite
 ```
 
 #### MySQL DB server
@@ -172,7 +172,7 @@ razor create-policy --name awesome-lb --repo centos-6.6 --broker pe --tag '[ "sm
 This rule will use 1 node tagged with the tags `large` and `2cpu`, provision with CentOS, name it `mysqldb${id}` (e.g., `node17` would be named `mysqldb17`).
 
 ```shell
-razor create-policy --name mysqldb --repo centos-6.6 --broker pe --tag '[ "large", "2cpu" ]' --enabled --hostname 'mysqldb${id}' --root-password secret --max-count 1 --task centos/6/custom --node-metadata role=mysqldb --node-metadata group=db
+razor create-policy --name mysqldb --repo centos-6 --broker pe --tag '[ "large", "2cpu" ]' --enabled --hostname 'mysqldb${id}.vm' --root-password secret --max-count 1 --task centos/6/custom --node-metadata role=mysqldb --node-metadata group=db
 ```
 
 
