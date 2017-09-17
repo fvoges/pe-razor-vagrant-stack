@@ -1,6 +1,5 @@
 require 'ipaddr'
 
-
 NETWORKS={
   'dev'      => IPAddr.new('172.16.61.0/24'),
   'test'     => IPAddr.new('172.16.62.0/24'),
