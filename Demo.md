@@ -41,6 +41,11 @@ VBOX_VM_DIR="$HOME/VirtualBox VMs"
 
 VBoxManage import example_pxe_boot_vm/Razor-PXE-Boot-Template.ova --vsys 0 --vmname Razor-Template-Small --memory 768 --ostype RedHat_64
 
+#                             [--boot<1-4> none|floppy|dvd|disk|net>]
+VBoxManage modifyvm Razor-Template-Small --boot1 net --boot2 disk
+
+
+
 VBoxManage clonevm Razor-Template-Small --mode machine --name Razor-Template-Large
 VBoxManage registervm "${VBOX_VM_DIR}"/Razor-Template-Large/Razor-Template-Large.vbox
 VBoxManage modifyvm Razor-Template-Large --cpus 2 --ioapic on --memory 850
