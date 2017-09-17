@@ -59,12 +59,15 @@ The following commands will create 6 nodes (3 small and 3 large).
 # This is the default location in Mac OS X. Update if necessary
 VBOX_VM_DIR="$HOME/VirtualBox VMs"
 
-for n in {1..3}
+for n in {1..4}
 do
   # Clone VM and register it with VirtualBox
   VBoxManage clonevm Razor-Template-Small --mode machine --name Razor-Small-${n}
   VBoxManage registervm "${VBOX_VM_DIR}"/Razor-Small-${n}/Razor-Small-${n}.vbox
+done
 
+for n in {1..2}
+do
   # Clone VM and register it with VirtualBox
   VBoxManage clonevm Razor-Template-Large --mode machine --name Razor-Large-${n}
   VBoxManage registervm "${VBOX_VM_DIR}"/Razor-Large-${n}/Razor-Large-${n}.vbox
