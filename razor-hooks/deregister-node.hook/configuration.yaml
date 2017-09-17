@@ -1,0 +1,36 @@
+---
+ca_server:
+  description: 'Puppet CA hostname'
+  default: 'puppet-master'
+  required: true
+
+ca_port:
+  description: 'Puppet CA port'
+  default: 8140
+  required: true
+
+puppetdb_server:
+  description: 'PuppetDB hostname'
+  default: 'puppet-master'
+  required: true
+
+puppetdb_port:
+  description: 'PuppetDB port'
+  default: 8081
+  required: true
+
+ca_cert:
+  description: 'Puppet CA root certificate'
+  default: '/etc/puppetlabs/razor-server/ssl/ca.pem'
+  required: true
+
+client_cert:
+  description: 'Client certificate location'
+  default: '/etc/puppetlabs/razor-server/ssl/client_cert.pem'
+  required: true
+
+client_key:
+  description: 'Client certificate private key location'
+  default: '/etc/puppetlabs/razor-server/ssl/client_key.pem'
+  required: true
+

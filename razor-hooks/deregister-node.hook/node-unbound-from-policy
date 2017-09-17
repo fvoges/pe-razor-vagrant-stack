@@ -1,0 +1,161 @@
+#!/opt/puppetlabs/puppet/bin/ruby
+
+require 'net/https'
+require 'json'
+require 'puppet'
+require 'time'
+require 'syslog/logger'
+
+$log = Syslog::Logger.new 'razor-hook'
+
+input = STDIN.read
+STDIN.close_read
+# File.write('/tmp/hook.log', input)
+
+input    = JSON.parse(input)
+config   = input['hook']['configuration']
+node     = input['node']
+certname = node.has_key?('metadata') && node['metadata'].has_key?('hostname') ? node['metadata']['hostname'] : node['hostname']
+
+CA_CERT       = config['ca_cert']
+CA_HOST       = config['ca_server']
+CA_PORT       = config['ca_port']
+CLIENT_CERT   = config['client_cert']
+CLIENT_KEY    = config['client_key']
+PUPPETDB_HOST = config['puppetdb_server']
+PUPPETDB_PORT = config['puppetdb_port']
+
+# https://docs.puppet.com/puppetdb/4.4/api/command/v1/commands.html#examples-using-curl
+# curl -X POST \
+#   -H "Accept: application/json" \
+#   -H "Content-Type: application/json" \
+#   -d '{"command":"deactivate node","version":3,"payload":{"certname":"test1","producer_timestamp":"2015-01-01"}}' \
+#   http://localhost:8080/pdb/cmd/v1
+#
+def deactivate_node(certname)
+  $log.info "deactivating node #{certname}"
+
+  request_uri  = "/pdb/cmd/v1"
+  request_body = {
+    :command => 'deactivate node',
+    :version => 3,
+    :payload => {
+      :certname           => certname,
+      :producer_timestamp => Time.now.iso8601(3)
+    }
+  }
+
+  http = Net::HTTP.new(PUPPETDB_HOST, PUPPETDB_PORT)
+  # http.set_debug_output($stdout)
+  http.use_ssl = true
+  http.cert = OpenSSL::X509::Certificate.new(File.read(CLIENT_CERT))
+  http.key  = OpenSSL::PKey::RSA.new(File.read(CLIENT_KEY))
+  http.ca_file = CA_CERT
+  http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+  request = Net::HTTP::Post.new(request_uri, 'Accept' => 'application/json', 'Content-type' => 'application/json')
+  request.body = request_body.to_json
+
+  res  = http.request(request)
+
+  check_res(res, certname)
+  rescue => e
+    $log.error "failed #{e} (#{certname})"
+    output = {
+      'error' => {
+        'message' => "failed #{e} (#{certname})",
+      }
+    }
+    puts output.to_json
+    exit 1
+end
+
+# Decommission a node:
+# PUT /puppet-ca/v1/certificate_status/<certname>?environment=<env>
+# payload: {"desired_state":"revoked"}
+#
+def revoke_cert(certname)
+  $log.info "revoking cert for node #{certname}"
+
+  request_uri  = "/puppet-ca/v1/certificate_status/#{certname}?environment=production"
+  request_body = '{"desired_state":"revoked"}'
+
+  http = Net::HTTP.new(CA_HOST, CA_PORT)
+  http.use_ssl = true
+  http.cert = OpenSSL::X509::Certificate.new(File.read(CLIENT_CERT))
+  http.key  = OpenSSL::PKey::RSA.new(File.read(CLIENT_KEY))
+  http.ca_file = CA_CERT
+  http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+  request = Net::HTTP::Put.new(request_uri, 'Content-Type' => 'application/json', 'Accept' => 'application/json')
+  request.body = request_body
+
+  res  = http.request(request)
+
+  check_res(res, certname)
+  rescue => e
+    $log.error "failed #{e} (#{certname})"
+    output = {
+      'error' => {
+        'message' => "failed #{e} (#{certname})",
+      }
+    }
+    puts output.to_json
+    exit 1
+end
+
+# DELETE /puppet-ca/v1/certificate_status/<certname>?environment=<env>
+# Access configured in PE Certificate Authority node group.
+#
+def delete_cert(certname)
+  $log.info "deleting cert for node #{certname}"
+
+  request_uri  = "/puppet-ca/v1/certificate_status/#{certname}?environment=production"
+
+  http = Net::HTTP.new(CA_HOST, CA_PORT)
+  http.use_ssl = true
+  http.cert = OpenSSL::X509::Certificate.new(File.read(CLIENT_CERT))
+  http.key  = OpenSSL::PKey::RSA.new(File.read(CLIENT_KEY))
+  http.ca_file = CA_CERT
+  http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+  request = Net::HTTP::Delete.new(request_uri, 'Accept' => 'application/json')
+
+  res = http.request(request)
+
+  check_res(res, certname)
+  rescue => e
+    $log.error "failed #{e} (#{certname})"
+    output = {
+      'error' => {
+        'message' => "failed #{e} (#{certname})",
+      }
+    }
+    puts output.to_json
+    exit 1
+end
+
+def check_res(res, certname)
+  case res.code
+  when "200", "204"
+  else
+    $log.error "Error #{res.code}: #{res.body} (#{certname})"
+    output = {
+      'error' => {
+        'message' => res.body,
+        'status' => res.code,
+      }
+    }
+    puts output.to_json
+    exit 1
+  end
+end
+
+$log.info "cleaning node #{certname}"
+
+deactivate_node(certname)
+revoke_cert(certname)
+delete_cert(certname)
+
+$log.info "cleaning node #{certname} completed"
+
