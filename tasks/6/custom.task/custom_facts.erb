@@ -3,3 +3,27 @@ mkdir -p /etc/puppetlabs/facter/facts.d
 echo "razor_role=<%= node.metadata['role'] %>" >  /etc/puppetlabs/facter/facts.d/razor_facts.txt
 echo "razor_group=<%= node.metadata['group'] %>" >>  /etc/puppetlabs/facter/facts.d/razor_facts.txt
 echo "razor_nodeid=<%= node.name %>" >>  /etc/puppetlabs/facter/facts.d/razor_facts.txt
+
+mkdir -p /etc/puppetlabs/puppet
+
+cat > /etc/puppetlabs/puppet/custom_trusted_oid_mapping.yaml <<YAML
+oid_mapping:
+  1.3.6.1.4.1.34380.1.2.1:
+    shortname: 'pp_nodeid'
+    longname: 'Razor node ID'
+  1.3.6.1.4.1.34380.1.2.2:
+    shortname: 'pp_group'
+    longname: 'Puppet group'
+YAML
+
+cat > /etc/puppetlabs/puppet/csr_attributes.yaml << YAML
+# These are only used for the CSR (e.g., policy based autosiging)
+# and will not be included in the signed certificate
+custom_attributes:
+# These get embeded into the certificate (i.e., trusted facts)
+extension_requests:
+    1.3.6.1.4.1.34380.1.2.2: "<%= node.metadata['group'] %>"
+    1.3.6.1.4.1.34380.1.2.1: "<%= node.name %>"
+    pp_role: "<%= node.metadata['role'] %>"
+YAML
+
